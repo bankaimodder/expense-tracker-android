@@ -26,7 +26,10 @@ The core of the app. Contains:
 
 - **Models** – plain Kotlin data classes (`Transaction`, `Category`,
   `Currency`, `DashboardData`, `Statistics`, ...). No Room or Compose
-  annotations here.
+  annotations here. `Category` is a good example: the domain enum only
+  knows its display name, and the icon/color used to render it live in
+  `presentation/common/CategoryPresentation.kt` as extension properties,
+  so Jetpack Compose types never leak into the domain layer.
 - **Repository interfaces** – `TransactionRepository`, `SettingsRepository`.
   The domain layer only knows about these contracts, never about Room or
   DataStore.
@@ -73,7 +76,8 @@ presentation/
   settings/          SettingsScreen, SettingsViewModel, ...
   navigation/        Screen.kt, ExpenseTrackerApp.kt (NavHost + bottom bar)
   theme/             Material 3 color scheme, typography
-  common/            Shared composables (TransactionListItem, loading/empty/error states)
+  common/            Shared composables (TransactionListItem, loading/empty/error states),
+                     formatting helpers, and the Category -> icon/color mapping
 ```
 
 Each screen follows the same MVVM shape:
@@ -83,7 +87,8 @@ Each screen follows the same MVVM shape:
    explicit, not implicit.
 2. A `*ViewModel` annotated with `@HiltViewModel` that injects use cases
    (never repositories or DAOs directly), combines their flows with
-   `combine`/`flatMapLatest`, and exposes a single `StateFlow<UiState>`.
+   `combine`/`flatMapLatest`, and exposes the result as a single
+   `StateFlow<UiState>` via `stateIn`.
 3. A stateless `@Composable` screen function that collects that state with
    `collectAsStateWithLifecycle()` and renders it, delegating every user
    action back to the ViewModel through plain callback lambdas.

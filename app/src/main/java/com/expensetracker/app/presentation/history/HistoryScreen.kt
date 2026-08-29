@@ -7,19 +7,23 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -41,6 +45,8 @@ import com.expensetracker.app.domain.model.Transaction
 import com.expensetracker.app.presentation.common.EmptyState
 import com.expensetracker.app.presentation.common.ErrorState
 import com.expensetracker.app.presentation.common.TransactionListItem
+import com.expensetracker.app.presentation.common.color
+import com.expensetracker.app.presentation.common.icon
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -141,20 +147,34 @@ private fun CategoryFilterRow(
 ) {
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp)
+        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
     ) {
         item {
             FilterChip(
                 selected = selectedCategory == null,
                 onClick = { onCategorySelected(null) },
-                label = { Text("All") }
+                label = { Text("All") },
+                leadingIcon = if (selectedCategory == null) {
+                    { Icon(Icons.Filled.Check, contentDescription = null, modifier = Modifier.size(FilterChipDefaults.IconSize)) }
+                } else {
+                    null
+                }
             )
         }
         items(Category.entries.toList()) { category ->
+            val isSelected = selectedCategory == category
             FilterChip(
-                selected = selectedCategory == category,
-                onClick = { onCategorySelected(if (selectedCategory == category) null else category) },
-                label = { Text(category.displayName) }
+                selected = isSelected,
+                onClick = { onCategorySelected(if (isSelected) null else category) },
+                label = { Text(category.displayName) },
+                leadingIcon = {
+                    Icon(
+                        imageVector = if (isSelected) Icons.Filled.Check else category.icon,
+                        contentDescription = null,
+                        modifier = Modifier.size(FilterChipDefaults.IconSize),
+                        tint = if (isSelected) LocalContentColor.current else category.color
+                    )
+                }
             )
         }
     }

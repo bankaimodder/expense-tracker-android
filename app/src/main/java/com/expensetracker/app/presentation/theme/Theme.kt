@@ -81,6 +81,7 @@ fun ExpenseTrackerTheme(
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,
+        shapes = ExpenseTrackerShapes,
         content = content
     )
 }

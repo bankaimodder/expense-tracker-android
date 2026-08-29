@@ -23,9 +23,6 @@ interface TransactionDao {
     )
     fun getFilteredTransactions(query: String, category: String?): Flow<List<TransactionEntity>>
 
-    @Query("SELECT * FROM transactions WHERE id = :id")
-    suspend fun getTransactionById(id: Long): TransactionEntity?
-
     @Insert
     suspend fun insertTransaction(transaction: TransactionEntity): Long
 

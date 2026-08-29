@@ -30,6 +30,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.expensetracker.app.presentation.common.EmptyState
 import com.expensetracker.app.presentation.common.ErrorState
 import com.expensetracker.app.presentation.common.LoadingState
+import com.expensetracker.app.presentation.common.color
 import com.expensetracker.app.presentation.common.formatAmount
 import com.expensetracker.app.presentation.theme.ExpenseRed
 import com.expensetracker.app.presentation.theme.IncomeGreen
@@ -87,10 +88,9 @@ fun StatisticsScreen(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .padding(top = 12.dp),
-                                    horizontalArrangement = Arrangement.Center
+                                    horizontalArrangement = Arrangement.spacedBy(24.dp, Alignment.CenterHorizontally)
                                 ) {
                                     LegendDot(color = IncomeGreen, label = "Income")
-                                    Box(modifier = Modifier.size(16.dp))
                                     LegendDot(color = ExpenseRed, label = "Expense")
                                 }
                             }
@@ -158,17 +158,16 @@ private fun CategoryBreakdownSection(uiState: StatisticsUiState) {
 
 @Composable
 private fun LegendDot(color: androidx.compose.ui.graphics.Color, label: String) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(6.dp)
+    ) {
         Box(
             modifier = Modifier
                 .size(10.dp)
                 .clip(CircleShape)
                 .background(color)
         )
-        Text(
-            text = label,
-            style = MaterialTheme.typography.labelMedium,
-            modifier = Modifier.padding(start = 6.dp, end = 12.dp)
-        )
+        Text(text = label, style = MaterialTheme.typography.labelMedium)
     }
 }

@@ -4,9 +4,12 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
 import com.expensetracker.app.domain.model.CategoryBreakdown
+import com.expensetracker.app.presentation.common.color
 
 @Composable
 fun PieChart(
@@ -20,7 +23,7 @@ fun PieChart(
 
         val strokeWidth = size.minDimension * 0.28f
         val diameter = size.minDimension - strokeWidth
-        val topLeft = androidx.compose.ui.geometry.Offset(
+        val topLeft = Offset(
             (size.width - diameter) / 2f,
             (size.height - diameter) / 2f
         )
@@ -36,7 +39,7 @@ fun PieChart(
                 useCenter = false,
                 topLeft = topLeft,
                 size = arcSize,
-                style = androidx.compose.ui.graphics.drawscope.Stroke(width = strokeWidth)
+                style = Stroke(width = strokeWidth)
             )
             startAngle += sweep
         }
