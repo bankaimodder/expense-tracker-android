@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -92,7 +94,7 @@ fun SettingsScreen(
                         TextButton(onClick = { expanded = true }) {
                             Text("${uiState.currency.symbol} ${uiState.currency.code}")
                             Icon(
-                                imageVector = androidx.compose.material.icons.Icons.Filled.ArrowDropDown,
+                                imageVector = Icons.Filled.ArrowDropDown,
                                 contentDescription = null
                             )
                         }
