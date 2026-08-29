@@ -1,20 +1,7 @@
 # ExpenseTracker
 
 A native Android app for tracking personal income and expenses, built with
-Kotlin and Jetpack Compose as a portfolio project.
-
-## Screenshots
-
-See [`screenshots/`](screenshots/) for a list of the screens to capture.
-Once added, they'll show up here:
-
-| Dashboard | Add Transaction | History |
-|---|---|---|
-| ![Dashboard](screenshots/dashboard.png) | ![Add Transaction](screenshots/add_transaction.png) | ![History](screenshots/history.png) |
-
-| Statistics | Settings |
-|---|---|
-| ![Statistics](screenshots/statistics.png) | ![Settings](screenshots/settings.png) |
+Kotlin and Jetpack Compose.
 
 ## Features
 
@@ -31,63 +18,29 @@ Once added, they'll show up here:
   and delete a transaction with a confirmation dialog.
 - **Settings** — toggle dark mode and pick a currency (USD, EUR, GBP, INR,
   JPY); both are persisted with DataStore and applied across the whole app.
-- Real persistence with **Room** — nothing is mocked or in-memory; every
-  transaction survives app restarts.
-- Explicit **loading, empty and error states** on every screen instead of
-  blank screens or silent failures.
-
-## Tech stack
-
-| Layer | Technology |
-|---|---|
-| Language | Kotlin |
-| UI | Jetpack Compose, Material 3 |
-| Architecture | MVVM + Clean Architecture |
-| Persistence | Room (transactions), DataStore Preferences (settings) |
-| DI | Hilt |
-| Navigation | Navigation Compose |
-| Async | Kotlin Coroutines & Flow |
-| Testing | JUnit 4, kotlinx-coroutines-test |
+- Real persistence with **Room** — every transaction survives app restarts.
+- Explicit loading, empty, and error states on every screen.
 
 ## Architecture
 
-The codebase is split into `domain`, `data`, and `presentation` layers, with
-dependencies pointing inward toward `domain`. See
-[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for the full breakdown,
-including how each screen's ViewModel, UI state, and use cases fit together.
+The codebase follows Clean Architecture, split into `domain`, `data`, and
+`presentation` layers, with dependencies pointing inward toward `domain`.
 
 ```
 app/src/main/java/com/expensetracker/app/
 ├── data/                  # Room, DataStore, repository implementations
-│   ├── local/
-│   │   ├── dao/
-│   │   ├── database/
-│   │   └── entity/
-│   ├── preferences/
-│   └── repository/
 ├── di/                    # Hilt modules
 ├── domain/                # Models, repository interfaces, use cases
-│   ├── model/
-│   ├── repository/
-│   └── usecase/
-├── presentation/          # Compose screens, ViewModels, navigation, theme
-│   ├── addtransaction/
-│   ├── common/
-│   ├── dashboard/
-│   ├── history/
-│   ├── main/
-│   ├── navigation/
-│   ├── settings/
-│   ├── statistics/
-│   └── theme/
-├── ExpenseTrackerApplication.kt
-└── MainActivity.kt
+└── presentation/          # Compose screens, ViewModels, navigation, theme
 ```
 
-## Getting started
+Each screen follows MVVM: a `*UiState` data class, a `@HiltViewModel` that
+exposes a single `StateFlow<UiState>` built from use cases, and a stateless
+`@Composable` screen that renders that state and forwards user actions back
+through plain callbacks. See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
+for the full breakdown.
 
-See [`docs/INSTALLATION.md`](docs/INSTALLATION.md) for full setup
-instructions. The short version:
+## Installation
 
 ```bash
 git clone https://github.com/bankaimodder/expense-tracker-android.git
@@ -97,28 +50,20 @@ cd expense-tracker-android
 
 Requires Android Studio, JDK 17, and a device/emulator running Android 8.0
 (API 26) or later. No backend, API keys, or `google-services.json` needed —
-everything runs and persists locally.
+everything runs and persists locally. See
+[`docs/INSTALLATION.md`](docs/INSTALLATION.md) for full setup instructions,
+troubleshooting, and how to run the test suite.
 
-## Running tests
+## Technologies Used
 
-```bash
-./gradlew testDebugUnitTest
-```
-
-Unit tests cover the domain layer, including transaction validation
-(`AddTransactionUseCase`) and dashboard aggregation logic
-(`GetDashboardDataUseCase`), using a fake in-memory repository so they run
-fast on the JVM without a device.
-
-## Project status
-
-This is a solo learning/portfolio project. Planned improvements:
-
-- Recurring transactions
-- Budgets per category with alerts
-- CSV export
-- Home screen widget
-
-## License
-
-This project is available for personal and educational use.
+| Layer | Technology |
+|---|---|
+| Language | Kotlin |
+| UI | Jetpack Compose, Material 3 |
+| Architecture | MVVM + Clean Architecture |
+| Persistence | Room (transactions), DataStore Preferences (settings) |
+| Dependency Injection | Hilt |
+| Navigation | Navigation Compose |
+| Async | Kotlin Coroutines & Flow |
+| Testing | JUnit 4, kotlinx-coroutines-test |
+| CI | GitHub Actions |

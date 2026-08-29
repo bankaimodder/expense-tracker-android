@@ -6,21 +6,32 @@ import com.expensetracker.app.domain.model.Category
 import com.expensetracker.app.domain.model.Transaction
 import com.expensetracker.app.domain.model.TransactionType
 import com.expensetracker.app.domain.usecase.AddTransactionUseCase
+import com.expensetracker.app.domain.usecase.GetCurrencyUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
 class AddTransactionViewModel @Inject constructor(
-    private val addTransactionUseCase: AddTransactionUseCase
+    private val addTransactionUseCase: AddTransactionUseCase,
+    getCurrencyUseCase: GetCurrencyUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AddTransactionUiState())
     val uiState: StateFlow<AddTransactionUiState> = _uiState.asStateFlow()
+
+    init {
+        getCurrencyUseCase()
+            .onEach { currency -> _uiState.update { it.copy(currency = currency) } }
+            .launchIn(viewModelScope)
+    }
 
     fun onTypeSelected(type: TransactionType) {
         val categories = Category.categoriesFor(type)
@@ -49,10 +60,6 @@ class AddTransactionViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(date = date)
     }
 
-    fun clearSavedFlag() {
-        _uiState.value = _uiState.value.copy(isSaved = false)
-    }
-
     fun saveTransaction() {
         val state = _uiState.value
         val amount = state.amountText.toDoubleOrNull()
@@ -74,7 +81,7 @@ class AddTransactionViewModel @Inject constructor(
             val result = addTransactionUseCase(transaction)
             result.fold(
                 onSuccess = {
-                    _uiState.value = AddTransactionUiState(isSaved = true)
+                    _uiState.value = AddTransactionUiState(isSaved = true, currency = state.currency)
                 },
                 onFailure = { throwable ->
                     _uiState.value = _uiState.value.copy(

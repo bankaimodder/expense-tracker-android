@@ -29,10 +29,6 @@ class TransactionRepositoryImpl @Inject constructor(
             .flowOn(Dispatchers.IO)
     }
 
-    override suspend fun getTransactionById(id: Long): Transaction? = withContext(Dispatchers.IO) {
-        transactionDao.getTransactionById(id)?.toDomain()
-    }
-
     override suspend fun addTransaction(transaction: Transaction): Long = withContext(Dispatchers.IO) {
         transactionDao.insertTransaction(transaction.toEntity())
     }

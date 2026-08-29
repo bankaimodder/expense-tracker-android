@@ -42,7 +42,7 @@ fun TransactionListItem(
         ) {
             Icon(
                 imageVector = transaction.category.icon,
-                contentDescription = transaction.category.displayName,
+                contentDescription = null,
                 tint = transaction.category.color
             )
         }

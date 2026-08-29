@@ -2,15 +2,15 @@ package com.expensetracker.app.presentation.addtransaction
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.CalendarToday
@@ -18,6 +18,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -47,11 +48,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.expensetracker.app.domain.model.Category
 import com.expensetracker.app.domain.model.TransactionType
+import com.expensetracker.app.presentation.common.color
+import com.expensetracker.app.presentation.common.icon
 import com.expensetracker.app.presentation.common.toDisplayString
 import java.time.Instant
 import java.time.ZoneOffset
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun AddTransactionScreen(
     onNavigateBack: () -> Unit,
@@ -106,9 +109,13 @@ fun AddTransactionScreen(
                 value = uiState.amountText,
                 onValueChange = viewModel::onAmountChanged,
                 label = { Text("Amount") },
-                keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
-                    keyboardType = KeyboardType.Decimal
-                ),
+                leadingIcon = {
+                    Text(
+                        text = uiState.currency.symbol,
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 isError = uiState.amountError != null,
                 supportingText = {
                     uiState.amountError?.let { Text(it) }
@@ -119,19 +126,17 @@ fun AddTransactionScreen(
 
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text("Category", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(3),
+                FlowRow(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(168.dp)
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    items(uiState.availableCategories) { category ->
+                    uiState.availableCategories.forEach { category ->
                         CategorySelectItem(
                             category = category,
                             isSelected = category == uiState.selectedCategory,
-                            onClick = { viewModel.onCategorySelected(category) }
+                            onClick = { viewModel.onCategorySelected(category) },
+                            modifier = Modifier.width(96.dp)
                         )
                     }
                 }
@@ -155,7 +160,7 @@ fun AddTransactionScreen(
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                    androidx.compose.foundation.layout.Row(
+                    Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
@@ -211,7 +216,7 @@ fun AddTransactionScreen(
                 }
             }
         ) {
-            androidx.compose.material3.DatePicker(state = datePickerState)
+            DatePicker(state = datePickerState)
         }
     }
 }
@@ -220,14 +225,15 @@ fun AddTransactionScreen(
 private fun CategorySelectItem(
     category: Category,
     isSelected: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Card(
         onClick = onClick,
         colors = CardDefaults.cardColors(
             containerColor = if (isSelected) category.color.copy(alpha = 0.2f) else MaterialTheme.colorScheme.surfaceVariant
         ),
-        modifier = Modifier.fillMaxWidth()
+        modifier = modifier
     ) {
         Column(
             modifier = Modifier.padding(8.dp),
@@ -236,7 +242,7 @@ private fun CategorySelectItem(
         ) {
             Icon(
                 imageVector = category.icon,
-                contentDescription = category.displayName,
+                contentDescription = null,
                 tint = category.color
             )
             Text(
