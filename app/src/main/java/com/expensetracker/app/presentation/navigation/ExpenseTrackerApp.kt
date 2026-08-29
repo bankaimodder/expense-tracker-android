@@ -50,7 +50,7 @@ fun ExpenseTrackerApp() {
                                     restoreState = true
                                 }
                             },
-                            icon = { Icon(item.icon, contentDescription = item.label) },
+                            icon = { Icon(item.icon, contentDescription = null) },
                             label = { Text(item.label) }
                         )
                     }

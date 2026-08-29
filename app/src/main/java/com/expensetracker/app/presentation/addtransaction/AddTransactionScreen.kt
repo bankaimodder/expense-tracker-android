@@ -242,7 +242,7 @@ private fun CategorySelectItem(
         ) {
             Icon(
                 imageVector = category.icon,
-                contentDescription = category.displayName,
+                contentDescription = null,
                 tint = category.color
             )
             Text(

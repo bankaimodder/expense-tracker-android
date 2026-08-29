@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.AttachMoney
+import androidx.compose.material.icons.filled.CurrencyExchange
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Card
@@ -70,7 +70,7 @@ fun SettingsScreen(
             Card {
                 var expanded by remember { mutableStateOf(false) }
                 SettingsRow(
-                    icon = Icons.Filled.AttachMoney,
+                    icon = Icons.Filled.CurrencyExchange,
                     title = "Currency",
                     subtitle = "Used to format all amounts in the app"
                 ) {
